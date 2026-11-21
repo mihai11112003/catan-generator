@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0e2c37">
+  <title>Catan board generator</title>
+  <meta name="description" content="Fair, rule-checked boards for CATAN in three board sizes, Seafarers, and Traders &amp; Barbarians (Fishing on Catan, Barbarian Attack).">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700;800&family=Alegreya+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-1 -1 2 2'%3E%3Cpolygon points='0,-1 .87,-.5 .87,.5 0,1 -.87,.5 -.87,-.5' fill='%23e6bd45'/%3E%3C/svg%3E">
+</head>
+<body>
+  <header class="masthead">
+    <h1>Catan board generator</h1>
+    <p>Fair boards that follow the rulebook — three board sizes, Seafarers, and Traders &amp; Barbarians.</p>
+  </header>
+
+  <main class="layout">
+    <section class="controls" aria-label="Board options">
+      <div class="group">
+        <h2 id="lbl-size">Board size</h2>
+        <div class="seg" role="radiogroup" aria-labelledby="lbl-size" id="size">
+          <label><input type="radio" name="size" value="normal"><span>Normal</span></label>
+          <label><input type="radio" name="size" value="medium"><span>Medium</span></label>
+          <label><input type="radio" name="size" value="big"><span>Big</span></label>
+        </div>
+        <p class="hint" id="size-desc"></p>
+      </div>
+
+      <div class="group">
+        <h2>Expansions</h2>
+        <label class="toggle"><input type="checkbox" id="opt-seafarers"><span>Seafarers</span></label>
+        <div class="sub" id="sea-sub">
+          <label class="field">Scenario
+            <select id="opt-sea-scenario">
+              <option value="newworld">New World (random islands)</option>
+              <option value="hfns">Heading for New Shores</option>
+            </select>
+          </label>
+          <label class="field" id="islands-field">Islands
+            <select id="opt-islands">
+              <option value="">Follow balance setting</option>
+              <option value="balanced">Separate, even islands</option>
+              <option value="random">Fully random (rulebook shuffle)</option>
+            </select>
+          </label>
+        </div>
+        <p class="kicker">Traders &amp; Barbarians</p>
+        <label class="toggle"><input type="checkbox" id="opt-fish"><span>Fishing on Catan</span></label>
+        <label class="toggle"><input type="checkbox" id="opt-rivers"><span>Rivers</span></label>
+        <label class="toggle"><input type="checkbox" id="opt-caravans"><span>Caravans</span></label>
+        <label class="toggle"><input type="checkbox" id="opt-ba"><span>Barbarian Attack</span></label>
+        <div class="sub" id="ba-sub">
+          <label class="field">Castle
+            <select id="opt-castle">
+              <option value="side">On a side (desert opposite)</option>
+              <option value="corner">On a corner (desert opposite)</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="group">
+        <h2 id="lbl-balance">Balance</h2>
+        <div class="seg seg-wide" role="radiogroup" aria-labelledby="lbl-balance" id="balance">
+          <label><input type="radio" name="balance" value="official"><span>Rules only</span></label>
+          <label><input type="radio" name="balance" value="balanced"><span>Balanced</span></label>
+          <label><input type="radio" name="balance" value="strict"><span>Strict</span></label>
+        </div>
+        <p class="hint" id="balance-desc"></p>
+        <details class="tune" id="tune">
+          <summary>Fine-tune the checks</summary>
+          <div id="flags"></div>
+          <label class="field" id="desert-field">Desert
+            <select id="opt-desert">
+              <option value="any">Anywhere</option>
+              <option value="inner">Inland only</option>
+              <option value="coast">On the coast only</option>
+            </select>
+          </label>
+        </details>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="primary" id="btn-new">New board</button>
+        <button type="button" id="btn-copy">Copy link</button>
+        <button type="button" id="btn-print">Print</button>
+      </div>
+      <form class="code" id="code-form">
+        <label for="code">Board code</label>
+        <input id="code" autocomplete="off" spellcheck="false" inputmode="text">
+        <button type="submit">Load</button>
+      </form>
+      <p class="hint">Press <kbd>N</kbd> for a new board. The link in the address bar always rebuilds this exact board.</p>
+    </section>
+
+    <section class="board-wrap" aria-label="Generated board">
+      <div class="board-head">
+        <h2 id="board-title">Board</h2>
+        <p id="board-sub"></p>
+      </div>
+      <div id="warnings"></div>
+      <svg id="board" role="img" aria-labelledby="board-title" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="view" aria-label="Show on board">
+        <label class="mini" id="view-odds-wrap"><input type="checkbox" id="view-odds" checked> Barbarian landing odds</label>
+        <label class="mini" id="view-region-wrap"><input type="checkbox" id="view-region" checked> Coast line</label>
+        <label class="mini"><input type="checkbox" id="view-hot"> Strong intersections (11+ dots)</label>
+      </div>
+    </section>
+
+    <aside class="report" id="report" aria-live="polite"></aside>
+  </main>
+
+  <footer class="foot">
+    <p>Fan-made tool. CATAN is a trademark of CATAN GmbH; this site is not affiliated with it. Rule sources are listed in the README.</p>
+  </footer>
+
+  <script src="js/core.js"></script>
+  <script src="js/rules.js"></script>
+  <script src="js/generator.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
